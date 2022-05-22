@@ -21,6 +21,7 @@ import re
 import random as rnd
 import numpy as np 
 
+
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import (QCoreApplication, QPropertyAnimation, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt, QEvent)
 from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter, QPixmap, QRadialGradient)
@@ -30,7 +31,8 @@ from subprocess import call
 # GUI FILE
 from app_modules import *
 
-import MainS as M
+from Errors import MyError
+import RegressMain as M
 from RandomVariables  import RandomVariables
 import NonParametrEstmation as npe
 #from newgold import gold
@@ -294,57 +296,63 @@ class MainWindow(QMainWindow):
         return (dirlist)
         
     def reg(self):
-        countMembers=[]
-        text = self.ui.lineEdit_morle.text()
-        member_Morle=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        countMembers.append(member_Morle)
+        try:
+            countMembers=[]
+            text = self.ui.lineEdit_morle.text()
+            member_Morle=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            countMembers.append(member_Morle)
 
-        text = self.ui.lineEdit_MH.text()
-        member_MH=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        countMembers.append(member_MH)
+            text = self.ui.lineEdit_MH.text()
+            member_MH=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            countMembers.append(member_MH)
 
-        text = self.ui.lineEdit_Dog.text()
-        member_Dog=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        countMembers.append(member_Dog)
+            text = self.ui.lineEdit_Dog.text()
+            member_Dog=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            countMembers.append(member_Dog)
 
-        text = self.ui.lineEdit_LP.text()
-        member_LP=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        countMembers.append(member_LP)
+            text = self.ui.lineEdit_LP.text()
+            member_LP=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            countMembers.append(member_LP)
 
-        text = self.ui.lineEdit_f.text()
-        member_f=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        countMembers.append(member_f)
+            text = self.ui.lineEdit_f.text()
+            member_f=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            countMembers.append(member_f)
 
-        text = self.ui.lineEdit_step.text()
-        stepErr=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-         
-        text = self.ui.lineEdit_v.text()
-        stepMu=int("0"+"".join(list(map(str, re.findall(r'\d+', text))))) 
+            text = self.ui.lineEdit_step.text()
+            stepErr=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            
+            text = self.ui.lineEdit_v.text()
+            stepMu=int("0"+"".join(list(map(str, re.findall(r'\d+', text))))) 
 
-        print(countMembers) 
-        withDrop=self.ui.checkBox_witDrops.isChecked()
-        #необходимо подключить сигнал от радиобатона
-        Drops = self.getDrops(withDrop,stepMu)
-        #Drops = stepMu
-        bigNoises = self.getBN(Drops)
-        ChooseDistribution=self.ui.comboBox_choiceD_2.currentIndex()
-      
-        Noises = self.getNoises(stepErr)
+            print(countMembers) 
+            withDrop=self.ui.checkBox_witDrops.isChecked()
+            #необходимо подключить сигнал от радиобатона
+            Drops = self.getDrops(withDrop,stepMu)
+            #Drops = stepMu
+            bigNoises = self.getBN(Drops)
+            ChooseDistribution=self.ui.comboBox_choiceD_2.currentIndex()
+        
+            Noises = self.getNoises(stepErr)
 
-        text = self.ui.lineEdit_kilvo.text()
-        CountS=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            text = self.ui.lineEdit_kilvo.text()
+            CountS=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
 
-        text = self.ui.lineEdit_vv.text()
-        CountV=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
-        file = self.ui.lineEdit_path.text()
-        print(file)
-        #file=open(text).read().split('\n')
-        direct=self.getDirectory()
-        file=self.getFileName()
-        self.ui.lineEdit_pathpar.setAccessibleName(file)
-        print(direct)
-        print(file)
-        M.mainWithGen(direct, file, bigNoises, Drops, ChooseDistribution, Noises, CountV, CountS, countMembers)
+            text = self.ui.lineEdit_vv.text()
+            CountV=int("0"+"".join(list(map(str, re.findall(r'\d+', text)))))
+            file = self.ui.lineEdit_path.text()
+            print(file)
+            #file=open(text).read().split('\n')
+            direct=self.getDirectory()
+            file=self.getFileName()
+            self.ui.lineEdit_pathpar.setAccessibleName(file)
+            print(direct)
+            print(file)
+            if direct == '': raise MyError('Не выбрана дирректория')
+            if file == '' : raise MyError('Не выбран файл')
+            M.mainWithGen(direct, file, bigNoises, Drops, ChooseDistribution, Noises, CountV, CountS, countMembers)
+        except MyError as er:
+            print(er)
+
 
     def getBN(self, mas):
         if mas[0]=='':

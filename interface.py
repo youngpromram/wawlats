@@ -5,7 +5,7 @@ from tkinter import filedialog as fd
 from tkinter import messagebox as mb
 
 from scipy.sparse.sputils import getdata
-import MainS as M
+import RegressMain as M
 from NonParametrEstmation import creater
 
 def sendErrMes(text):
